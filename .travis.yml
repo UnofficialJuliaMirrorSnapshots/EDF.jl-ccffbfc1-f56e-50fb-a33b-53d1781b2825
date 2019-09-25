@@ -1,0 +1,23 @@
+language: julia
+os:
+  - linux
+julia:
+  - 1.0
+  - 1.2
+  - nightly
+notifications:
+  email: false
+matrix:
+  allow_failures:
+  - julia: nightly
+after_success:
+  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())';
+jobs:
+  include:
+    - stage: "Documentation"
+      julia: 1.0
+      os: linux
+      script:
+        - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=".")); Pkg.instantiate()'
+        - julia --project=docs/ docs/make.jl
+      after_success: skip
